@@ -33,12 +33,7 @@ def save(persona):
             mensaje = str(ex)
         
         return {"respuesta": False, "mensaje":mensaje}
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
-    
+   
 
 def findALL():
     try:
@@ -56,11 +51,7 @@ def findALL():
         
         return {"respuesta": False, "mensaje":str(ex)}
     
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
+   
     
 def find(dniPersona):
     try:
@@ -81,11 +72,7 @@ def find(dniPersona):
         
         return {"respuesta": False, "mensaje":str(ex)}
     
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
+    
 
 def update(persona):
     try:
@@ -105,7 +92,7 @@ def update(persona):
         Email=?
         WHERE dni='{dni}' 
         """.format(dni=dniPersona)
-        cursor.execute(sql, valores)
+        cursor.execute(sql, (valores))
         modificada= cursor.rowcount>0
         db.commit()
         
@@ -115,11 +102,7 @@ def update(persona):
             return{"respuesta": modificada, "mensaje": "No existe esa persona con ese dni" }
     except Exception as ex:
         return{"respuesta": False, "mensaje": str(ex)}
-    finally:
-        if cursor is not None:
-            cursor.close()
-        if db is not None:
-            db.close()
+    
 
 def delete(idPersona):
     try:
