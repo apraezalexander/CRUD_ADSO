@@ -7,7 +7,7 @@ def conectar():
         sql= """
         CREATE TABLE IF NOT EXISTS personas(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            DNI TEXT NOT NULL UNIQUE,
+            dni TEXT NOT NULL UNIQUE,
             Edad INTEGER NOT NULL,
             Nombre TEXT NOT NULL,
             Apellidos TEXT NOT NULL,
