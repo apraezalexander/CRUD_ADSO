@@ -57,12 +57,12 @@ def find(dniPersona):
     try:
         db = con.conectar()
         cursor = db.cursor()
-        cursor.execute ("SELECT * FROM personas WHERE dni='{dni}'".format(dniPersona=dniPersona))
+        cursor.execute ("SELECT * FROM personas WHERE dni='{dni}'".format(dni=dniPersona))
         res = cursor.fetchall()
         if res:
 
             info=res[0]
-            persona_info={"id":info[0], "dni":info[1], "Edad": info[2], "Nombre": info[3], "Apellidos": info[4], "Dirección":info[5], "Email":info[6]}
+            persona_info={"id":info[0], "dni":info[1], "Nombre": info[3], "Apellidos": info[4], "Edad": info[2], "Dirección":info[5], "Email":info[6]}
             
             return{"respuesta":True, "persona": persona_info, "mensaje":"Persona encontrada"}
         else:
@@ -81,13 +81,13 @@ def update(persona):
         persona= dict(persona)
         dniPersona= persona.get('dni')
         persona.pop('dni')
-        valores= tuple(persona.value())
+        valores= tuple(persona.values())
         sql= """
         UPDATE personas
         SET  
-        Edad=?, 
         Nombre=?, 
         Apellidos=?, 
+        Edad=?,
         Dirección=?, 
         Email=?
         WHERE dni='{dni}' 
@@ -101,7 +101,11 @@ def update(persona):
         else: 
             return{"respuesta": modificada, "mensaje": "No existe esa persona con ese dni" }
     except Exception as ex:
-        return{"respuesta": False, "mensaje": str(ex)}
+        if "UNIQUE" in str(ex) and "Email" in str(ex):
+            mensaje= "Ya existe una persona con ese correo"
+        else: 
+            mensaje = str(ex)
+        return{"respuesta": False, "mensaje": mensaje}
     
 
 def delete(idPersona):

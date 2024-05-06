@@ -65,9 +65,9 @@ def limpiarCampos():
     e_dni.focus()
 
     
-def guardar():                     #revisar aquí esos dos puntos
+def guardar():                     
     if txt_edad.get().isnumeric():
-        per= {"DNI": txt_dni.get(), "Nombre": txt_nombre.get(), "Apellidos": txt_apellidos.get(), "Edad": int(txt_edad.get()), "Dirección": txt_direccion.get(), "Email": txt_email.get()}
+        per= {"dni": txt_dni.get(), "Nombre": txt_nombre.get(), "Apellidos": txt_apellidos.get(), "Edad": int(txt_edad.get()), "Dirección": txt_direccion.get(), "Email": txt_email.get()}
         res= pDatos.save(per)
         if res.get("respuesta"):
             llenartabla()
@@ -85,11 +85,11 @@ def consultar():
         res = pDatos.find(txt_dni.get())
         if res.get("respuesta"):
             persona= res.get("persona")
-            txt_nombre.set(persona.get("nombre"))
-            txt_apellidos.set(persona.get("apellidos"))
-            txt_edad.set(persona.get("edad"))
-            txt_direccion.set(persona.get("direccion"))
-            txt_email.set(persona.get("email"))
+            txt_nombre.set(persona.get("Nombre"))
+            txt_apellidos.set(persona.get("Apellidos"))
+            txt_edad.set(persona.get("Edad"))
+            txt_direccion.set(persona.get("Dirección"))
+            txt_email.set(persona.get("Email"))
         else:
             e_dni.focus()
             limpiarCampos()
@@ -98,6 +98,42 @@ def consultar():
         e_dni.focus()
         limpiarCampos()
         messagebox.showerror("Lo siento", "Debe ingresar el DNI")
+
+def actualizar():                     
+    if txt_edad.get().isnumeric():
+        per= {"dni": txt_dni.get(), "Nombre": txt_nombre.get(), "Apellidos": txt_apellidos.get(), "Edad": int(txt_edad.get()), "Dirección": txt_direccion.get(), "Email": txt_email.get()}
+        res= pDatos.update(per)
+        if res.get("respuesta"):
+            llenartabla()
+            messagebox.showinfo("OK", res.get("mensaje"))
+            limpiarCampos()
+        else:
+            messagebox.showerror("Lo siento", res.get("mensaje"))
+    else:
+        txt_edad.set("")
+        e_edad.focus()
+        messagebox.showerror("Lo siento","La edad debe ser un número")
+
+def eliminar():                     
+    if txt_dni.get()!="":
+        res= pDatos.find(txt_dni.get())
+        if res.get("respuesta"):
+            persona = res.get("persona")
+            respuesta = messagebox.askquestion("Confirmar", "Realmente desea eliminar a {Nombre} {Apellidos}".format(Nombre=persona.get("Nombre"), Apellidos=persona.get("Apellidos")))
+            if respuesta== "yes":
+                res= pDatos.delete(persona.get("id"))
+                if res.get("respuesta"):
+                    llenartabla()
+                    limpiarCampos()
+                    messagebox.showinfo("OK", res.get("mensaje"))
+                else:
+                    messagebox.showwarning("Lo siento!", "No se logró eliminar a la persona"+res.get("mensaje"))
+        else:
+            messagebox.showwarning("Lo siento!", "No existe la persona")
+            limpiarCampos()
+    else:
+        e_dni.focus()
+        messagebox.showerror("Lo siento","Debe ingresar el DNI")
 #### --------------FIN FUNCIONES------------- ####
 
 #### --------------GUI------------- ####
@@ -136,8 +172,8 @@ icondelete= PhotoImage(file="delete.png")
 ###--BOTONES--###
 ttk.Button(v, text="Guardar", command=guardar,image=iconNew, compound=LEFT).place(x=10, y=210)
 ttk.Button(v, text="Consultar", command=consultar, image=iconfind, compound=LEFT).place(x=120, y=210)
-ttk.Button(v, text="Actualizar", command=None, image=iconrefresh, compound=LEFT).place(x=230, y=210)
-ttk.Button(v, text="Eliminar", command=None, image=icondelete, compound=LEFT).place(x=340, y=210)
+ttk.Button(v, text="Actualizar", command=actualizar, image=iconrefresh, compound=LEFT).place(x=230, y=210)
+ttk.Button(v, text="Eliminar", command=eliminar, image=icondelete, compound=LEFT).place(x=340, y=210)
 
 ###--- CREACIÓN DE TABLAS---####
 
@@ -171,14 +207,14 @@ m_archivo.add_command(label="Salir", command=salir)
 menuTop.add_cascade(label="Archivo", menu=m_archivo)
 
 m_limpiar = Menu(menuTop, tearoff=0)
-m_limpiar.add_command(label="Limpiar campos")
+m_limpiar.add_command(label="Limpiar campos", command=limpiarCampos)
 menuTop.add_cascade(label="Limpiar", menu=m_limpiar)
 
 m_crud = Menu(menuTop, tearoff=0)
-m_crud.add_command(label="Guardar", image=iconNew, compound=LEFT)
-m_crud.add_command(label="Consultar", image=iconfind, compound=LEFT)
-m_crud.add_command(label="Actualizar", image=iconrefresh, compound=LEFT)
-m_crud.add_command(label="Eliminar", image=icondelete, compound=LEFT)
+m_crud.add_command(label="Guardar",command=guardar, image=iconNew, compound=LEFT)
+m_crud.add_command(label="Consultar", command=consultar, image=iconfind, compound=LEFT)
+m_crud.add_command(label="Actualizar", command=actualizar, image=iconrefresh, compound=LEFT)
+m_crud.add_command(label="Eliminar", command=eliminar, image=icondelete, compound=LEFT)
 menuTop.add_cascade(label="Crud", menu=m_crud)
 
 

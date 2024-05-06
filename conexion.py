@@ -8,9 +8,9 @@ def conectar():
         CREATE TABLE IF NOT EXISTS personas(
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             dni TEXT NOT NULL UNIQUE,
-            Edad INTEGER NOT NULL,
             Nombre TEXT NOT NULL,
             Apellidos TEXT NOT NULL,
+            Edad INTEGER NOT NULL,
             Dirección TEXT DEFAULT "No tiene",
             Email TEXT NOT NULL UNIQUE 
         )
